@@ -1,0 +1,16 @@
+{
+  "author": "igorlogius",
+  "background": {
+	"scripts": ["background.js"]
+  },
+  "description": "partially import or export part of the bookmarks tree",
+  "icons": {
+  },
+  "manifest_version": 2,
+  "name": "partial-bookmark-import-export",
+  "permissions": [
+    "menus",
+    "bookmarks"
+  ],
+  "version": "1.0.0"
+}
