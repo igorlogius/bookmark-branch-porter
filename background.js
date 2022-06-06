@@ -1,3 +1,4 @@
+/* global browser */
 
 const manifest = browser.runtime.getManifest();
 const extname = manifest.name;
@@ -14,7 +15,7 @@ browser.menus.create({
     title: menuid1,
     contexts: ["bookmark"],
     visible: true,
-    onclick: async function(info, tab) {
+    onclick: async function(info /*, tab*/) {
         if(info.bookmarkId ) {
             try {
                 const tmp = (await browser.bookmarks.getSubTree(info.bookmarkId))[0];
@@ -34,7 +35,7 @@ browser.menus.create({
     title: menuid2,
     contexts: ["bookmark"],
     visible: true,
-    onclick: async function(info, tab) {
+    onclick: async function(info /*, tab*/) {
         if(info.bookmarkId ) {
             try {
                 impBMid = info.bookmarkId;
@@ -131,15 +132,15 @@ browser.browserAction.onClicked.addListener(async (tab) => {
 */
 
 // read data from file into current table
-impbtn.addEventListener('input', function (evt) {
+impbtn.addEventListener('input', function (/*evt*/) {
 	var file  = this.files[0];
 	var reader = new FileReader();
-	        reader.onload = async function(e) {
+            reader.onload = async function(/*e*/) {
             try {
                 const data = JSON.parse(reader.result);
                 importData(impBMid, data);
             } catch (e) {
-                log('ERROR','error loading file ' + e);
+                console.error(e);
             }
         };
         reader.readAsText(file);
