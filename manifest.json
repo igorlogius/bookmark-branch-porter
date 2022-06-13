@@ -5,12 +5,13 @@
   },
   "description": "partially import or export part of the bookmarks tree",
   "icons": {
+    "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "partial-bookmark-import-export",
+  "name": "Partial Bookmark Import & Export",
   "permissions": [
     "menus",
     "bookmarks"
   ],
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
