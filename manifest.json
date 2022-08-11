@@ -8,10 +8,10 @@
     "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "Partial Bookmark Import & Export",
+  "name": "Partial Bookmark",
   "permissions": [
     "menus",
     "bookmarks"
   ],
-  "version": "1.0.3"
+  "version": "1.0.4"
 }

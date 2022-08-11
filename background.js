@@ -9,10 +9,26 @@ let impbtn = document.createElement('input');
 impbtn.type = "file";
 impbtn.accept = "application/json";
 
-const menuid1 = "Export/Save";
+let impBMid = null;
+
 browser.menus.create({
-    id: menuid1,
-    title: menuid1,
+    title: "Import",
+    contexts: ["bookmark"],
+    visible: true,
+    onclick: async function(info /*, tab*/) {
+        if(info.bookmarkId ) {
+            try {
+                impBMid = info.bookmarkId;
+                impbtn.click();
+            }catch(e){
+                console.error(e);
+            }
+        }
+    }
+});
+
+browser.menus.create({
+    title: "Export",
     contexts: ["bookmark"],
     visible: true,
     onclick: async function(info /*, tab*/) {
@@ -27,25 +43,6 @@ browser.menus.create({
     }
 });
 
-let impBMid = null;
-
-const menuid2 = "Import/Replace";
-browser.menus.create({
-    id: menuid2,
-    title: menuid2,
-    contexts: ["bookmark"],
-    visible: true,
-    onclick: async function(info /*, tab*/) {
-        if(info.bookmarkId ) {
-            try {
-                impBMid = info.bookmarkId;
-                impbtn.click();
-            }catch(e){
-                console.error(e);
-            }
-        }
-    }
-});
 
 async function importJSON(node,parentId){
 
