@@ -3,7 +3,6 @@
   "background": {
 	"scripts": ["background.js"]
   },
-  "description": "partially import or export part of the bookmarks tree",
   "icons": {
     "128": "icon.png"
   },
@@ -13,5 +12,5 @@
     "menus",
     "bookmarks"
   ],
-  "version": "1.0.4"
+  "version": "1.0.5"
 }
