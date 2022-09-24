@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-    <title>Import Bookmarks from File</title>
+    <title>Export Bookmarks</title>
     <style>
         body {
             background-color: lightgray;
@@ -15,15 +15,14 @@
 <body>
     <fieldset>
         <select id="folders">
-            <option value=''>Select Bookmark Folder</option>
+            <option value='root________'>Export All or Select Folder</option>
         </select>
     </fieldset>
     <fieldset>
-        <label for="impbtn">Select File to Import </label>
-        <input id="impbtn" type="file" value="" disabled />
+        <input id="expbtn" type="button" value="Export" />
     </fieldset>
     <fieldset>
        <div id="status"></div>
     </fieldset>
-    <script src="dialog.js"></script>
+    <script src="export-dialog.js"></script>
 </body>

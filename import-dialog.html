@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <title>Import Bookmarks</title>
+    <style>
+        body {
+            background-color: lightgray;
+        }
+        #folders {
+            width:100%;
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <select id="folders">
+            <option value=''>Select Folder</option>
+        </select>
+    </fieldset>
+    <fieldset>
+        <label for="impbtn">Select File to Import </label>
+        <input id="impbtn" type="file" value="" disabled />
+    </fieldset>
+    <fieldset>
+       <div id="status"></div>
+    </fieldset>
+    <script src="import-dialog.js"></script>
+</body>
