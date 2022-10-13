@@ -1,3 +1,4 @@
+/* global browser */
 
 document.getElementById('impbtn').addEventListener('click', () => {
     browser.windows.create({

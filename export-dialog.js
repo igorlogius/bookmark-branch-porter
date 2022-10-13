@@ -3,41 +3,6 @@
 const folders = document.getElementById('folders');
 const result = document.getElementById('status');
 
-let impbtn;
-
-/*
-async function importData(bookmarkId, data){
-
-
-      let count = 0;
-      const str = data;
-
-		let m;
-		while ((m = regex.exec(str)) !== null ) {
-			// This is necessary to avoid infinite loops with zero-width matches
-			if (m.index === regex.lastIndex) {
-				regex.lastIndex++;
-			}
-
-			// The result can be accessed through the `m`-variable.
-			m.forEach((match, groupIndex) => {
-				//console.log(`Found match, group ${groupIndex}: ${match}`);
-
-				if(groupIndex === 0) { // group 0 is the full match
-
-                    browser.bookmarks.create({
-                        parentId: bookmarkId,
-                        url: match
-                    });
-                    count++;
-
-                }
-			});
-        }
-        result.innerText = 'Done. Created ' + count + ' Bookmarks';
-}
-*/
-
 function recGetFolders(node, depth = 0){
     let out = new Map();
     if(typeof node.url !== 'string'){
@@ -61,71 +26,40 @@ async function initSelect() {
         out = new Map([...out, ...recGetFolders(node, depth) ]);
     }
     for(const [k,v] of out){
-        //console.debug(k, v.title);
         folders.add(new Option("-".repeat(v.depth) + " " + v.title, k))
     }
-}
-
-
-async function importData(bookmarkId, data){
-    // special cases where bookmarkId is ...
-    /*
-    if(bookmarkId in ['root________','menu________','toolbar_____','unfiled_____','mobile______']){
-        // TBD
-    }
-    else{
-    */
-        try {
-            const bookmarkItem = (await browser.bookmarks.getSubTree(bookmarkId))[0];
-            // remove all children + descendents
-            if(bookmarkItem.children){
-                for(var child of bookmarkItem.children){
-                    //try {
-                    browser.bookmarks.removeTree(child.id);
-                    /*}catch(e){
-            console.error(e);
-        }*/
-                }
-            }
-
-            // add new children
-            //
-            importJSON(data, bookmarkId);
-
-        }catch(e){
-            console.error(e);
-        }
-
-
-    //}
-
 }
 
 async function onLoad() {
 
     await initSelect();
-    impbtn = document.getElementById('expbtn');
+    let expbtn = document.getElementById('expbtn');
 
-    folders.addEventListener('input', function (/*evt*/) {
+    folders.addEventListener('input', function () {
         if(folders.value !== ''){
-            impbtn.disabled = false;
+            expbtn.disabled = false;
         }else{
-            impbtn.disabled = true;
+            expbtn.disabled = true;
         }
     });
 
-    impbtn.addEventListener('click', async function(){
-        const data = (await browser.bookmarks.getSubTree(folders.value))[0];
-        const content = JSON.stringify(data,null,4);
-        let dl = document.createElement('a');
-        const href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
-        dl.setAttribute('href', href);
-        dl.setAttribute('download', 'export.json');
-        dl.setAttribute('visibility', 'hidden');
-        dl.setAttribute('display', 'none');
-        document.body.appendChild(dl);
-        dl.click();
-        document.body.removeChild(dl);
+    expbtn.addEventListener('click', async function(){
+        try {
+            const data = (await browser.bookmarks.getSubTree(folders.value))[0];
+            const content = JSON.stringify(data,null,4);
+            let dl = document.createElement('a');
+            const href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
+            dl.setAttribute('href', href);
+            dl.setAttribute('download', 'export.json');
+            dl.setAttribute('visibility', 'hidden');
+            dl.setAttribute('display', 'none');
+            document.body.appendChild(dl);
+            dl.click();
+            document.body.removeChild(dl);
+            result.innerText = 'Export done';
+        }catch(e){
+            result.innerText = 'Export failed (' + e.toString() + ')';
+        }
     });
 
 }
