@@ -6,6 +6,10 @@
         body {
             background-color: lightgray;
         }
+	#expbtn {
+		width: 50%;
+		margin-left:25%;
+	}
         #folders {
             width:100%;
             text-align:center;
@@ -14,8 +18,9 @@
 </head>
 <body>
     <fieldset>
+	    <legend>Select Export Scope</legend>
         <select id="folders">
-            <option value='root________'>Export All or Select Folder</option>
+            <option value='root________'>Export Bookmark Root</option>
         </select>
     </fieldset>
     <fieldset>
@@ -24,5 +29,7 @@
     <fieldset>
        <div id="status"></div>
     </fieldset>
+
+    <script src="browser-polyfill.min.js"></script>
     <script src="export-dialog.js"></script>
 </body>

@@ -50,7 +50,7 @@ async function onLoad() {
             let dl = document.createElement('a');
             const href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
             dl.setAttribute('href', href);
-            dl.setAttribute('download', 'export.json');
+            dl.setAttribute('download',  'export ' + ((folders.value === 'root________')?"all": folders.options[folders.selectedIndex].text) + '.json');
             dl.setAttribute('visibility', 'hidden');
             dl.setAttribute('display', 'none');
             document.body.appendChild(dl);
