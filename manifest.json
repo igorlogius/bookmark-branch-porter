@@ -7,9 +7,9 @@
     "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "Partial Bookmark",
+  "name": "Bookmark Branch Porter",
   "permissions": [
     "bookmarks"
   ],
-  "version": "1.2.7"
+  "version": "1.2.8"
 }
