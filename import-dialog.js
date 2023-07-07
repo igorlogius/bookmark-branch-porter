@@ -33,13 +33,6 @@ async function initSelect() {
 
 async function importData(bookmarkId, data) {
   try {
-    const bookmarkItem = (await browser.bookmarks.getSubTree(bookmarkId))[0];
-    // remove all children (+descendents)
-    if (bookmarkItem.children) {
-      for (var child of bookmarkItem.children) {
-        browser.bookmarks.removeTree(child.id);
-      }
-    }
     // add new childen
     importJSON(data, bookmarkId);
   } catch (e) {
