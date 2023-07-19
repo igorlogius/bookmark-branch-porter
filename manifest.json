@@ -1,5 +1,6 @@
 {
   "author": "igorlogius",
+  "homepage_url": "https://github.com/igorlogius/bookmark-branch-porter",
   "background": {
     "scripts": ["background.js"]
   },
@@ -10,10 +11,11 @@
     "128": "icon.png"
   },
   "manifest_version": 2,
+  "description": "Import or export a branch of the bookmark tree as a JSON or HTML file",
   "name": "Bookmark Branch Porter",
   "permissions": ["bookmarks"],
   "options_ui": {
     "page": "options.html"
   },
-  "version": "1.3.10"
+  "version": "1.3.11"
 }
