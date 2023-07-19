@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<head>
+  <meta content="text/html;charset=utf-8" />
+  <style>
+    input[type="file"] {
+      float: right;
+    }
+    body {
+      background-color: lightgray;
+      padding: 3%;
+      text-align: center;
+    }
+    #impbtn,
+    #expbtn {
+      width: 50%;
+      margin-left: 25%;
+      text-align: center;
+    }
+    #impbtnhtml,
+    #expbtnhtml {
+      margin-left: 25%;
+      width: 50%;
+      text-align: center;
+    }
+    #impfolders,
+    #expfolders {
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <fieldset>
+    <legend><b>Export Bookmarks</b></legend>
+    <select id="expfolders">
+      <option value="root________">Select Folder (optional)</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <input id="expbtn" type="button" value="Export JSON" />
+  </fieldset>
+  <fieldset>
+    <input id="expbtnhtml" type="button" value="Export HTML" />
+  </fieldset>
+  <fieldset>
+    <div id="expstatus"></div>
+  </fieldset>
+
+  --- or ---
+
+  <fieldset>
+    <legend><b>Import Bookmarks</b></legend>
+    <select id="impfolders">
+      <option value="">Select Import Folder (required)</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <label for="impbtn">Select JSON</label>
+    <input id="impbtn" type="file" value="" disabled />
+  </fieldset>
+  <fieldset>
+    <label for="impbtnhtml">Select HTML</label>
+    <input id="impbtnhtml" type="file" value="" disabled />
+  </fieldset>
+  <fieldset>
+    <div id="impstatus"></div>
+  </fieldset>
+
+  <script src="options.js"></script>
+</body>
