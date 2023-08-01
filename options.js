@@ -191,7 +191,6 @@ async function exponLoad() {
   expbtn.addEventListener("click", async function () {
     try {
       const data = (await browser.bookmarks.getSubTree(expfolders.value))[0];
-      console.debug(rec2HtmlStr(data));
       const content = JSON.stringify(data, null, 4);
       let dl = document.createElement("a");
       const href =
@@ -220,7 +219,7 @@ async function exponLoad() {
     console.debug("expbtnhtml");
     try {
       const data = (await browser.bookmarks.getSubTree(expfolders.value))[0];
-      const content = btoa(rec2HtmlStr(data));
+      const content = btoa(unescape(encodeURIComponent(rec2HtmlStr(data))));
       let dl = document.createElement("a");
       const href = "data:text/plain;base64;charset=utf-8," + content;
       dl.setAttribute("href", href);
@@ -261,7 +260,7 @@ function rec2HtmlStr(bmTreeNode, level = 1) {
       "</A>" +
       "\n";
   } else if (Array.isArray(bmTreeNode.children)) {
-    tmp = "\t".repeat(level) + "<DT><H3>" + title + "</H3>" + "\n";
+    tmp = "\t".repeat(level) + "<DT><H3>" + htmlEncode(title) + "</H3>" + "\n";
     if (bmTreeNode.children.length > 0) {
       out = out + tmp;
       out = out + "\t".repeat(level) + "<DL><p>" + "\n";
