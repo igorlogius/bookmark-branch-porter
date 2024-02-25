@@ -191,11 +191,11 @@ async function exponLoad() {
   expbtn.addEventListener("click", async function () {
     try {
       const data = (await browser.bookmarks.getSubTree(expfolders.value))[0];
+
       const content = JSON.stringify(data, null, 4);
       let dl = document.createElement("a");
-      const href =
-        "data:application/json;charset=utf-8," + encodeURIComponent(content);
-      dl.setAttribute("href", href);
+      let textFileAsBlob = new Blob([content], { type: "text/plain" });
+      dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
       dl.setAttribute(
         "download",
         "export " +
@@ -216,13 +216,12 @@ async function exponLoad() {
   });
 
   expbtnhtml.addEventListener("click", async function () {
-    console.debug("expbtnhtml");
     try {
       const data = (await browser.bookmarks.getSubTree(expfolders.value))[0];
-      const content = btoa(unescape(encodeURIComponent(rec2HtmlStr(data))));
+      const content = unescape(encodeURIComponent(rec2HtmlStr(data)));
       let dl = document.createElement("a");
-      const href = "data:text/plain;base64;charset=utf-8," + content;
-      dl.setAttribute("href", href);
+      let textFileAsBlob = new Blob([content], { type: "text/plain" });
+      dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
       dl.setAttribute(
         "download",
         "export " +
