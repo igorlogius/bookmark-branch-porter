@@ -47,13 +47,13 @@ function recParseHtmlNode(dlNode) {
     title: dlNode.previousElementSibling.innerText,
     children: [],
   };
-  for (const tmp of dlNode.querySelectorAll(":scope > dt a")) {
+  for (const tmp of dlNode.querySelectorAll(":scope > dt > a")) {
     out.children.push({
       title: tmp.innerText,
       url: tmp.href,
     });
   }
-  for (const tmp of dlNode.querySelectorAll(":scope > dl")) {
+  for (const tmp of dlNode.querySelectorAll(":scope > dt > dl")) {
     out.children.push(recParseHtmlNode(tmp));
   }
   return out;
@@ -61,12 +61,13 @@ function recParseHtmlNode(dlNode) {
 
 function htmlDoc2Json(doc) {
   let out = {
-    title: "root",
+    title: "",
     children: [],
   };
-  for (const dl of doc.body.querySelectorAll(":scope > dl")) {
+  for (const dl of doc.querySelectorAll("body > dl > dt > dl > dt > dl")) {
     out.children.push(recParseHtmlNode(dl));
   }
+  //console.debug(JSON.stringify(out,null,4));
   return out;
 }
 
@@ -92,6 +93,7 @@ async function imponLoad() {
     reader.onload = async function (/*e*/) {
       try {
         const data = JSON.parse(reader.result);
+        //console.debug(data);
         importData(impfolders.value, data);
         impresult.innerText = "Import done";
       } catch (e) {
@@ -131,18 +133,20 @@ async function importJSON(node, parentId) {
       index: node.index,
       parentId: parentId,
       title: node.title,
-      type: node.type,
+      type: "bookmark",
       url: node.url,
     });
-  } else if (node.children) {
-    const nBM = await browser.bookmarks.create({
-      index: node.index,
-      parentId: parentId,
-      title: node.title,
-      type: node.type,
-    });
-    for (let child of node.children) {
-      await importJSON(child, nBM.id);
+  } else {
+    if (node.children && node.children.length > 0) {
+      const nBM = await browser.bookmarks.create({
+        index: node.index,
+        parentId: parentId,
+        title: node.title,
+        type: "folder",
+      });
+      for (let child of node.children) {
+        await importJSON(child, nBM.id);
+      }
     }
   }
 }
