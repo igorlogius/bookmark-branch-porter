@@ -1,42 +1,12 @@
 /* global browser */
 
-const impfolders = document.getElementById("impfolders");
-const impresult = document.getElementById("impstatus");
-const expfolders = document.getElementById("expfolders");
-const expresult = document.getElementById("expstatus");
-
-function recGetFolders(node, depth = 0) {
-  let out = new Map();
-  if (typeof node.url !== "string") {
-    if (node.id !== "root________") {
-      out.set(node.id, { depth: depth, title: node.title });
-    }
-    if (node.children) {
-      for (let child of node.children) {
-        out = new Map([...out, ...recGetFolders(child, depth + 1)]);
-      }
-    }
-  }
-  return out;
-}
-
-async function impinitSelect() {
-  const nodes = await browser.bookmarks.getTree();
-  let out = new Map();
-  let depth = 1;
-  for (const node of nodes) {
-    out = new Map([...out, ...recGetFolders(node, depth)]);
-  }
-  for (const [k, v] of out) {
-    //console.debug(k, v.title);
-    impfolders.add(new Option("-".repeat(v.depth) + " " + v.title, k));
-  }
-}
+let globalbookmarkId;
+let globaltype;
 
 async function importData(bookmarkId, data) {
   try {
     // add new childen
-    importJSON(data, bookmarkId);
+    await importJSON(data, bookmarkId);
   } catch (e) {
     console.error(e);
   }
@@ -64,67 +34,13 @@ function htmlDoc2Json(doc) {
     title: "",
     children: [],
   };
-  for (const dl of doc.querySelectorAll("body > dl > dt > dl > dt > dl")) {
+  for (const dl of doc.querySelectorAll("body > dl > dt > dl")) {
     out.children.push(recParseHtmlNode(dl));
   }
-  //console.debug(JSON.stringify(out,null,4));
+  if (out.children.length === 1) {
+    return out.children[0];
+  }
   return out;
-}
-
-async function imponLoad() {
-  await impinitSelect();
-  let impbtn = document.getElementById("impbtn");
-  let impbtnhtml = document.getElementById("impbtnhtml");
-
-  impfolders.addEventListener("input", function (/*evt*/) {
-    if (impfolders.value !== "") {
-      impbtn.disabled = false;
-      impbtnhtml.disabled = false;
-    } else {
-      impbtn.disabled = true;
-      impbtnhtml.disabled = true;
-    }
-  });
-
-  // read data from file into current table
-  impbtn.addEventListener("input", function (/*evt*/) {
-    const file = this.files[0];
-    const reader = new FileReader();
-    reader.onload = async function (/*e*/) {
-      try {
-        const data = JSON.parse(reader.result);
-        //console.debug(data);
-        importData(impfolders.value, data);
-        impresult.innerText = "Import done";
-      } catch (e) {
-        console.error(e);
-        impresult.innerText = "Import failed (" + e.toString() + ")";
-      }
-    };
-    reader.readAsText(file);
-  });
-
-  // read data from file into current table
-  impbtnhtml.addEventListener("input", function (/*evt*/) {
-    const file = this.files[0];
-    const reader = new FileReader();
-    reader.onload = async function (/*e*/) {
-      try {
-        //const data = JSON.parse(reader.result);
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(reader.result, "text/html");
-
-        const data = htmlDoc2Json(htmlDoc);
-
-        importData(impfolders.value, data);
-        impresult.innerText = "Import done";
-      } catch (e) {
-        console.error(e);
-        impresult.innerText = "Import failed (" + e.toString() + ")";
-      }
-    };
-    reader.readAsText(file);
-  });
 }
 
 async function importJSON(node, parentId) {
@@ -163,87 +79,6 @@ function htmlEncode(input) {
   const textArea = document.createElement("textarea");
   textArea.innerText = input;
   return textArea.innerHTML.split("<br>").join("\n");
-}
-
-async function expinitSelect() {
-  const nodes = await browser.bookmarks.getTree();
-  let out = new Map();
-  let depth = 1;
-  for (const node of nodes) {
-    out = new Map([...out, ...recGetFolders(node, depth)]);
-  }
-  for (const [k, v] of out) {
-    expfolders.add(new Option("-".repeat(v.depth) + " " + v.title, k));
-  }
-}
-
-async function exponLoad() {
-  await expinitSelect();
-  let expbtn = document.getElementById("expbtn");
-  let expbtnhtml = document.getElementById("expbtnhtml");
-
-  expfolders.addEventListener("input", function () {
-    if (expfolders.value !== "") {
-      expbtn.disabled = false;
-      expbtnhtml.disabled = false;
-    } else {
-      expbtn.disabled = true;
-      expbtnhtml.disabled = true;
-    }
-  });
-
-  expbtn.addEventListener("click", async function () {
-    try {
-      const data = (await browser.bookmarks.getSubTree(expfolders.value))[0];
-
-      const content = JSON.stringify(data, null, 4);
-      let dl = document.createElement("a");
-      let textFileAsBlob = new Blob([content], { type: "text/plain" });
-      dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
-      dl.setAttribute(
-        "download",
-        "export " +
-          (expfolders.value === "root________"
-            ? "all"
-            : expfolders.options[expfolders.selectedIndex].text) +
-          ".json"
-      );
-      dl.setAttribute("visibility", "hidden");
-      dl.setAttribute("display", "none");
-      document.body.appendChild(dl);
-      dl.click();
-      document.body.removeChild(dl);
-      expresult.innerText = "Export done";
-    } catch (e) {
-      expresult.innerText = "Export failed (" + e.toString() + ")";
-    }
-  });
-
-  expbtnhtml.addEventListener("click", async function () {
-    try {
-      const data = (await browser.bookmarks.getSubTree(expfolders.value))[0];
-      const content = unescape(encodeURIComponent(rec2HtmlStr(data)));
-      let dl = document.createElement("a");
-      let textFileAsBlob = new Blob([content], { type: "text/plain" });
-      dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
-      dl.setAttribute(
-        "download",
-        "export " +
-          (expfolders.value === "root________"
-            ? "all"
-            : expfolders.options[expfolders.selectedIndex].text) +
-          ".html"
-      );
-      dl.setAttribute("visibility", "hidden");
-      dl.setAttribute("display", "none");
-      document.body.appendChild(dl);
-      dl.click();
-      document.body.removeChild(dl);
-      expresult.innerText = "Export done";
-    } catch (e) {
-      expresult.innerText = "Export failed (" + e.toString() + ")";
-    }
-  });
 }
 
 function rec2HtmlStr(bmTreeNode, level = 1) {
@@ -303,9 +138,38 @@ function rec2HtmlStr(bmTreeNode, level = 1) {
   return out;
 }
 
-function onLoad() {
-  imponLoad();
-  exponLoad();
+async function onLoad() {
+  let url = new URL(window.location.href);
+  let params = new URL(document.location).searchParams;
+  let type = params.get("type");
+  globalbookmarkId = params.get("bookmarkId");
+  globaltype = params.get("type");
+
+  let impbtn = document.getElementById("impbtn");
+
+  impbtn.addEventListener("input", function (/*evt*/) {
+    const file = this.files[0];
+    const reader = new FileReader();
+    reader.onload = async function (/*e*/) {
+      try {
+        let data;
+        if (globaltype === "json") {
+          data = JSON.parse(reader.result);
+        } else {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(reader.result, "text/html");
+          data = htmlDoc2Json(htmlDoc);
+        }
+        await importData(globalbookmarkId, data);
+        window.close();
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById("impbtn").click();
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
