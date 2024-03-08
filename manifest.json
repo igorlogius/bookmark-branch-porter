@@ -4,9 +4,6 @@
   "background": {
     "scripts": ["background.js"]
   },
-  "browser_action": {
-    "default_area": "navbar"
-  },
   "icons": {
     "128": "icon.png"
   },
@@ -14,5 +11,5 @@
   "description": "Import or export a branch of the bookmark tree as a JSON or HTML file",
   "name": "Bookmark Branch Porter",
   "permissions": ["menus", "bookmarks"],
-  "version": "1.4.14"
+  "version": "1.4.15"
 }
