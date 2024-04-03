@@ -11,5 +11,5 @@
   "description": "Import or export a branch of the bookmark tree as a JSON or HTML file",
   "name": "Bookmark Branch Porter",
   "permissions": ["menus", "bookmarks"],
-  "version": "1.4.15"
+  "version": "1.4.16"
 }

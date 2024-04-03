@@ -169,7 +169,12 @@ async function onLoad() {
     reader.readAsText(file);
   });
 
-  document.getElementById("impbtn").click();
+  // doenst work in noe debugging mode, snice user activation is required
+  /*
+  setTimeout(() => {
+    document.getElementById("impbtn").click();
+  }, 1500);
+    */
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
