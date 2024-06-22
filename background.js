@@ -1,10 +1,9 @@
 /* global browser */
 
-function htmlEncode(input) {
-  const textArea = document.createElement("textarea");
-  textArea.innerText = input;
-  return textArea.innerHTML.split("<br>").join("\n");
-}
+const toHtmlEntities = (str, showInHtml = false) =>
+  [...str]
+    .map((v) => `${showInHtml ? `&amp;#` : `&#`}${v.codePointAt(0)};`)
+    .join(``);
 
 async function exportJSON(bookmarkId) {
   if (typeof bookmarkId !== "string") {
@@ -18,7 +17,7 @@ async function exportJSON(bookmarkId) {
   dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
   dl.setAttribute(
     "download",
-    "export " + (bookmarkId === "root________" ? "all" : data.title) + ".json"
+    "export " + (bookmarkId === "root________" ? "all" : data.title) + ".json",
   );
   dl.setAttribute("visibility", "hidden");
   dl.setAttribute("display", "none");
@@ -33,8 +32,8 @@ function rec2HtmlStr(bmTreeNode, level = 1) {
   let out = "";
   "\t".repeat(level);
   let tmp = "";
-  const title =
-    typeof bmTreeNode.title === "string" ? htmlEncode(bmTreeNode.title) : "";
+  let title = typeof bmTreeNode.title === "string" ? bmTreeNode.title : "";
+  title = toHtmlEntities(title);
   if (typeof bmTreeNode.url === "string") {
     out =
       out +
@@ -46,7 +45,7 @@ function rec2HtmlStr(bmTreeNode, level = 1) {
       "</A>" +
       "\n";
   } else if (Array.isArray(bmTreeNode.children)) {
-    tmp = "\t".repeat(level) + "<DT><H3>" + htmlEncode(title) + "</H3>" + "\n";
+    tmp = "\t".repeat(level) + "<DT><H3>" + title + "</H3>" + "\n";
     if (bmTreeNode.children.length > 0) {
       out = out + tmp;
       out = out + "\t".repeat(level) + "<DL><p>" + "\n";
@@ -98,7 +97,7 @@ async function exportHTML(bookmarkId) {
   dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
   dl.setAttribute(
     "download",
-    "export " + (bookmarkId === "root________" ? "all" : data.title) + ".html"
+    "export " + (bookmarkId === "root________" ? "all" : data.title) + ".html",
   );
   dl.setAttribute("visibility", "hidden");
   dl.setAttribute("display", "none");
