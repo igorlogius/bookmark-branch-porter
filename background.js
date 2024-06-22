@@ -5,6 +5,18 @@ const toHtmlEntities = (str, showInHtml = false) =>
     .map((v) => `${showInHtml ? `&amp;#` : `&#`}${v.codePointAt(0)};`)
     .join(``);
 
+function fromHtmlEntities(input) {
+  const el = document.createElement("div");
+  el.innerHTML = input;
+  return el.innerText;
+}
+
+function unHTML(input) {
+  const textArea = document.createElement("textarea");
+  textArea.innerText = input;
+  return textArea.innerHTML.split("<br>").join("\n");
+}
+
 async function exportJSON(bookmarkId) {
   if (typeof bookmarkId !== "string") {
     bookmarkId = "root________";
@@ -39,7 +51,7 @@ function rec2HtmlStr(bmTreeNode, level = 1) {
       out +
       "\t".repeat(level) +
       '<DT><A HREF="' +
-      htmlEncode(bmTreeNode.url) +
+      unHTML(bmTreeNode.url) +
       '">' +
       title +
       "</A>" +
