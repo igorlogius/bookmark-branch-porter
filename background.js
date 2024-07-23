@@ -5,11 +5,13 @@ const toHtmlEntities = (str, showInHtml = false) =>
     .map((v) => `${showInHtml ? `&amp;#` : `&#`}${v.codePointAt(0)};`)
     .join(``);
 
+/*
 function fromHtmlEntities(input) {
   const el = document.createElement("div");
   el.innerHTML = input;
   return el.innerText;
 }
+*/
 
 function unHTML(input) {
   const textArea = document.createElement("textarea");

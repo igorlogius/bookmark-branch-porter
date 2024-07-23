@@ -51,6 +51,9 @@ async function importJSON(node, parentId) {
       title: node.title,
       type: "bookmark",
       url: node.url,
+      /* not allowed: ref. https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/CreateDetails
+      dateAdded: node.dateAdded ? node.dateAdded : Date.now(),
+      */
     });
   } else {
     if (node.children && node.children.length > 0) {
@@ -59,6 +62,12 @@ async function importJSON(node, parentId) {
         parentId: parentId,
         title: node.title,
         type: "folder",
+        /* not allowed: ref. https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/CreateDetails
+        dateAdded: node.dateAdded ? node.datAdded : Date.now(),
+        dateGroupModified: node.dateGroupModified
+          ? node.dateGroupModified
+          : Date.now(),
+      */
       });
       for (let child of node.children) {
         await importJSON(child, nBM.id);
