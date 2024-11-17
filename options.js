@@ -4,12 +4,8 @@ let globalbookmarkId;
 let globaltype;
 
 async function importData(bookmarkId, data) {
-  try {
-    // add new childen
-    await importJSON(data, bookmarkId);
-  } catch (e) {
-    console.error(e);
-  }
+  // add new childen
+  return importJSON(data, bookmarkId);
 }
 
 function recParseHtmlNode(dlNode) {
@@ -170,9 +166,12 @@ async function onLoad() {
           data = htmlDoc2Json(htmlDoc);
         }
         await importData(globalbookmarkId, data);
-        window.close();
+        document.getElementById("message").innerText =
+          "INFO: Import finished without errors, check the results then you can close this tab";
       } catch (e) {
         console.error(e);
+        document.getElementById("message").innerText =
+          "ERROR: Import failed, " + e.toString();
       }
     };
     reader.readAsText(file);
