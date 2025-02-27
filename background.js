@@ -1,5 +1,9 @@
 /* global browser */
 
+const testDownloadsPermission = {
+  permissions: ["downloads"],
+};
+
 const toHtmlEntities = (str, showInHtml = false) =>
   [...str]
     .map((v) => `${showInHtml ? `&amp;#` : `&#`}${v.codePointAt(0)};`)
@@ -26,9 +30,31 @@ async function exportJSON(bookmarkId) {
   const data = (await browser.bookmarks.getSubTree(bookmarkId))[0];
 
   const content = JSON.stringify(data, null, 4);
-  let dl = document.createElement("a");
   let textFileAsBlob = new Blob([content], { type: "text/plain" });
-  dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
+  const bloburl = window.URL.createObjectURL(textFileAsBlob);
+
+  if (await browser.permissions.contains(testDownloadsPermission)) {
+    await browser.downloads.download({
+      url: bloburl,
+      filename:
+        "export " +
+        (bookmarkId === "root________" ? "all" : data.title) +
+        ".json",
+      conflictAction: "uniquify",
+      saveAs: true,
+    });
+
+    // lets just wait 30sec and then remove the bloburl ...
+    // todo: make this use the onChange download event instead
+    setTimeout(() => {
+      window.URL.revokeObjectURL(bloburl);
+    }, 30000);
+
+    return;
+  }
+
+  let dl = document.createElement("a");
+  dl.setAttribute("href", bloburl);
   dl.setAttribute(
     "download",
     "export " + (bookmarkId === "root________" ? "all" : data.title) + ".json",
@@ -106,8 +132,30 @@ async function exportHTML(bookmarkId) {
   const data = (await browser.bookmarks.getSubTree(bookmarkId))[0];
 
   const content = unescape(encodeURIComponent(rec2HtmlStr(data)));
-  let dl = document.createElement("a");
   let textFileAsBlob = new Blob([content], { type: "text/plain" });
+  const bloburl = window.URL.createObjectURL(textFileAsBlob);
+
+  if (await browser.permissions.contains(testDownloadsPermission)) {
+    await browser.downloads.download({
+      url: bloburl,
+      filename:
+        "export " +
+        (bookmarkId === "root________" ? "all" : data.title) +
+        ".json",
+      conflictAction: "uniquify",
+      saveAs: true,
+    });
+
+    // lets just wait 30sec and then remove the bloburl ...
+    // todo: make this use the onChange download event instead
+    setTimeout(() => {
+      window.URL.revokeObjectURL(bloburl);
+    }, 30000);
+
+    return;
+  }
+
+  let dl = document.createElement("a");
   dl.setAttribute("href", window.URL.createObjectURL(textFileAsBlob));
   dl.setAttribute(
     "download",
