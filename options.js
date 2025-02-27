@@ -2,10 +2,11 @@
 
 let globalbookmarkId;
 let globaltype;
+let globalnoroot;
 
-async function importData(bookmarkId, data) {
+async function importData(bookmarkId, data, noroot) {
   // add new childen
-  return importJSON(data, bookmarkId);
+  return importJSON(data, bookmarkId, noroot);
 }
 
 function recParseHtmlNode(dlNode) {
@@ -39,7 +40,7 @@ function htmlDoc2Json(doc) {
   return out;
 }
 
-async function importJSON(node, parentId) {
+async function importJSON(node, parentId, noroot) {
   if (node.url) {
     await browser.bookmarks.create({
       index: node.index,
@@ -53,20 +54,26 @@ async function importJSON(node, parentId) {
     });
   } else {
     if (node.children && node.children.length > 0) {
-      const nBM = await browser.bookmarks.create({
-        index: node.index,
-        parentId: parentId,
-        title: node.title,
-        type: "folder",
-        /* not allowed: ref. https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/CreateDetails
+      if (noroot) {
+        for (let child of node.children) {
+          await importJSON(child, parentId, false);
+        }
+      } else {
+        const nBM = await browser.bookmarks.create({
+          index: node.index,
+          parentId: parentId,
+          title: node.title,
+          type: "folder",
+          /* not allowed: ref. https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/CreateDetails
         dateAdded: node.dateAdded ? node.datAdded : Date.now(),
         dateGroupModified: node.dateGroupModified
           ? node.dateGroupModified
           : Date.now(),
       */
-      });
-      for (let child of node.children) {
-        await importJSON(child, nBM.id);
+        });
+        for (let child of node.children) {
+          await importJSON(child, nBM.id, false);
+        }
       }
     }
   }
@@ -149,6 +156,7 @@ async function onLoad() {
   let type = params.get("type");
   globalbookmarkId = params.get("bookmarkId");
   globaltype = params.get("type");
+  globalnoroot = params.get("noroot") === "1";
 
   let impbtn = document.getElementById("impbtn");
 
@@ -165,7 +173,7 @@ async function onLoad() {
           const htmlDoc = parser.parseFromString(reader.result, "text/html");
           data = htmlDoc2Json(htmlDoc);
         }
-        await importData(globalbookmarkId, data);
+        await importData(globalbookmarkId, data, globalnoroot);
         document.getElementById("message").innerText =
           "INFO: Import finished without errors, check the results then you can close this tab";
       } catch (e) {

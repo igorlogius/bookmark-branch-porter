@@ -157,7 +157,7 @@ browser.menus.create({
   contexts: ["bookmark"],
   onclick: (info, tab) => {
     browser.tabs.create({
-      url: "options.html?type=json&bookmarkId=" + info.bookmarkId,
+      url: "options.html?type=json&bookmarkId=" + info.bookmarkId + "&noroot=0",
     });
   },
 });
@@ -167,7 +167,27 @@ browser.menus.create({
   contexts: ["bookmark"],
   onclick: (info, tab) => {
     browser.tabs.create({
-      url: "options.html?type=html&bookmarkId=" + info.bookmarkId,
+      url: "options.html?type=html&bookmarkId=" + info.bookmarkId + "&noroot=0",
+    });
+  },
+});
+
+browser.menus.create({
+  title: "Import Branch (HTML) (without root folder)",
+  contexts: ["bookmark"],
+  onclick: (info, tab) => {
+    browser.tabs.create({
+      url: "options.html?type=html&bookmarkId=" + info.bookmarkId + "&noroot=1",
+    });
+  },
+});
+
+browser.menus.create({
+  title: "Import Branch (JSON) (without root folder)",
+  contexts: ["bookmark"],
+  onclick: (info, tab) => {
+    browser.tabs.create({
+      url: "options.html?type=json&bookmarkId=" + info.bookmarkId + "&noroot=1",
     });
   },
 });
